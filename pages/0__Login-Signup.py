@@ -68,14 +68,13 @@ if not st.session_state.logged_in:
             if submit_login:
                 db = load_db()
                 if u in db["users"] and db["users"][u]["password"] == p:
-                    st.session_state.logged_in = True
-                    st.session_state.username = u
-                    st.session_state.display_name = db["users"][u]["name"]
-                    st.success(f"Welcome back, {st.session_state.display_name}!")
-                    st.rerun()
+                      st.session_state.logged_in = True
+                      st.session_state.username = u
+                      st.success("Login Successful!")
+                      st.rerun()
                 else:
-                    st.error("❌ Invalid username or password. Please try again.")
-
+                      st.error("❌ Invalid username or password. Please try again.")
+  
     with tab2:
         with st.form("signup_form"):
             new_name = st.text_input("Full Name", placeholder="e.g. Sreenandh V Nair")
