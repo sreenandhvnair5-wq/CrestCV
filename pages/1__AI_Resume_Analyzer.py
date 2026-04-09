@@ -31,13 +31,7 @@ def get_chatbot_response(user_query, resume_context):
         return f"Error: {str(e)}"
 
 # --- 2. PAGE CONFIG & STYLING ---
-st.set_page_config(page_title="CrestCV | AI Resume Intelligence", layout="wide", page_icon="🧠")
-
-# Security Guard: Ensures user came from the Home page login
-if not st.session_state.get('logged_in', False):
-    st.warning("⚠️ Please login on the Home page to access the Neural Audit.")
-    st.page_link("Home.py", label="Go to Login", icon="🏠")
-    st.stop()
+st.set_page_config(page_title="Neural Audit | CrestCV", layout="wide", page_icon="🔍")
 
 st.markdown("""
     <style>
@@ -60,24 +54,17 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. SIDEBAR (CLEANED) ---
+# --- 3. SIDEBAR ---
 with st.sidebar:
-    st.title("🧠 CrestCV Dashboard")
-    st.write(f"User: **{st.session_state.get('username', 'Guest')}**")
+    st.title("🧠 CrestCV")
+    st.info("Free AI Resume Analysis. No account required.")
     
     if 'resume_text' in st.session_state:
-        if st.button("💾 Save to Profile"):
-            if not os.path.exists("saved_data"): 
-                os.makedirs("saved_data")
-            un = st.session_state.get('username', 'user')
-            with open(f"saved_data/{un}_resume.txt", "w", encoding="utf-8") as f:
-                f.write(st.session_state['resume_text'])
-            st.success("Saved to server!")
-    
-    st.divider()
-    if st.button("🚪 Logout"):
-        st.session_state.logged_in = False
-        st.rerun()
+        st.success("Resume Loaded ✅")
+        if st.button("🧹 Clear Session"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
 
 # --- 4. MAIN UI ---
 logo_url = "https://cdn-icons-png.flaticon.com/512/2103/2103633.png" 
@@ -94,7 +81,7 @@ st.markdown(f"""
 col_in1, col_in2 = st.columns(2)
 with col_in1:
     st.subheader("1. Job Requirements")
-    jd_input = st.text_area("Paste Job Description...", height=200)
+    jd_input = st.text_area("Paste Job Description...", height=200, placeholder="Paste the job requirements here...")
 with col_in2:
     st.subheader("2. Your Resume")
     uploaded_file = st.file_uploader("Upload PDF Resume", type="pdf")
@@ -116,7 +103,7 @@ if uploaded_file and jd_input:
             Resume: {current_res[:2000]}
             JD: {jd_input[:2000]}
             Return ONLY JSON:
-            {{ "score": 85, "tech_fit": [], "soft_skills": [], "formatting": [], "missing_keywords": [] }}
+            {{ "score": 85, "tech_fit": ["Skill A", "Skill B"], "soft_skills": ["Skill C"], "formatting": ["Tip"], "missing_keywords": ["Keyword"] }}
             """
             try:
                 response = client.chat.completions.create(
@@ -125,9 +112,9 @@ if uploaded_file and jd_input:
                     response_format={ "type": "json_object" } 
                 )
                 data = json.loads(response.choices[0].message.content)
-                st.session_state['last_analysis'] = data # Store for persistence
+                st.session_state['last_analysis'] = data 
             except Exception as e:
-                st.error("AI Analysis failed.")
+                st.error("AI Analysis failed. Please try again.")
 
 # --- 5. DISPLAY RESULTS ---
 if 'last_analysis' in st.session_state:
@@ -154,28 +141,25 @@ if 'last_analysis' in st.session_state:
         for p in data.get("formatting", []): st.write(f"🔹 {p}")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# --- 6. MOBILE FIXED CHATBOT ---
+# --- 6. CHATBOT SECTION ---
 st.divider()
 st.header("💬 AI Career Coach")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Show previous messages
 for chat in st.session_state.chat_history:
     with st.chat_message(chat["role"]):
         st.write(chat["content"])
 
-if prompt := st.chat_input("Ask NeuralCV about your resume..."):
-    # Add user message
+if prompt := st.chat_input("Ask about your resume improvements..."):
     st.session_state.chat_history.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
     
-    # Generate AI Response safely
     context = st.session_state.get('resume_text', '')
     with st.chat_message("assistant"):
-        with st.spinner("NeuralCV is thinking..."):
+        with st.spinner("Thinking..."):
             answer = get_chatbot_response(prompt, context)
             st.write(answer)
             st.session_state.chat_history.append({"role": "assistant", "content": answer})
