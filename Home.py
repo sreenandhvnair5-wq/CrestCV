@@ -63,3 +63,10 @@ to be told with clarity and data-driven results.
 """)
 
 st.caption("© 2026 CrestCV - All Rights Reserved.")
+st.write("---")
+col_a, col_b = st.columns([2, 1])
+with col_a:
+    st.subheader("Want to save your progress?")
+    st.write("Create a free account to store your AI audits and generated resumes.")
+with col_b:
+    st.page_link("pages/0_🔐_Login.py", label="Login / Sign Up", icon="🔐", use_container_width=True)
