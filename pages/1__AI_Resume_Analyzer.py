@@ -78,6 +78,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
+# --- 4. MAIN UI INPUTS ---
 col_in1, col_in2 = st.columns(2)
 with col_in1:
     st.subheader("1. Job Requirements")
@@ -86,8 +87,8 @@ with col_in2:
     st.subheader("2. Your Resume")
     uploaded_file = st.file_uploader("Upload PDF Resume", type="pdf")
 
-# Process File Upload
-if uploaded_file and jd_input:
+# Extraction Logic (Hidden from UI)
+if uploaded_file:
     if "last_file" not in st.session_state or st.session_state.last_file != uploaded_file.name:
         with st.spinner("Extracting Knowledge..."):
             extracted = extract_text(uploaded_file)
@@ -95,7 +96,16 @@ if uploaded_file and jd_input:
             st.session_state['last_file'] = uploaded_file.name
             st.rerun()
 
-    if st.button("🚀 Run Neural Audit", use_container_width=True):
+# --- 5. THE AUDIT BUTTON (Always Visible) ---
+st.divider()
+if st.button("🚀 Run Neural Audit", use_container_width=True):
+    # Check for missing inputs first
+    if not jd_input.strip():
+        st.warning("⚠️ Please paste a Job Description to proceed.")
+    elif not uploaded_file:
+        st.warning("⚠️ Please upload your Resume PDF to proceed.")
+    else:
+        # If everything is there, run the AI
         with st.spinner("🧠 Deep AI Audit in progress..."):
             current_res = st.session_state.get('resume_text', '')
             analysis_prompt = f"""
@@ -103,7 +113,7 @@ if uploaded_file and jd_input:
             Resume: {current_res[:2000]}
             JD: {jd_input[:2000]}
             Return ONLY JSON:
-            {{ "score": 85, "tech_fit": ["Skill A", "Skill B"], "soft_skills": ["Skill C"], "formatting": ["Tip"], "missing_keywords": ["Keyword"] }}
+            {{ "score": 85, "tech_fit": [], "soft_skills": [], "formatting": [], "missing_keywords": [] }}
             """
             try:
                 response = client.chat.completions.create(
@@ -113,8 +123,9 @@ if uploaded_file and jd_input:
                 )
                 data = json.loads(response.choices[0].message.content)
                 st.session_state['last_analysis'] = data 
+                st.rerun() # Refresh to show results
             except Exception as e:
-                st.error("AI Analysis failed. Please try again.")
+                st.error("AI Analysis failed. Please check your API key or try again.")
 
 # --- 5. DISPLAY RESULTS ---
 if 'last_analysis' in st.session_state:
