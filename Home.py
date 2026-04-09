@@ -1,65 +1,77 @@
 import streamlit as st
+import os
 
-st.set_page_config(page_title="CrestCV | Professional AI Career Tools", page_icon="🏠", layout="wide")
+# Page Config for SEO
+st.set_page_config(
+    page_title="CrestCV | AI Resume Intelligence & Builder",
+    page_icon="🧠",
+    layout="wide"
+)
 
-# Custom CSS for a clean look
+# --- 1. SESSION STATE INITIALIZATION ---
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+if 'username' not in st.session_state:
+    st.session_state.username = None
+
+# --- 2. STYLING ---
 st.markdown("""
     <style>
-    .main-title { font-size: 50px; font-weight: bold; color: #007bff; text-align: center; }
-    .sub-title { font-size: 24px; text-align: center; color: #555; margin-bottom: 30px; }
-    .article-box { padding: 20px; border-radius: 10px; background-color: #f9f9f9; border-left: 5px solid #007bff; margin-bottom: 20px; }
+    .main-title { font-size: 50px; font-weight: bold; color: #1e40af; text-align: center; margin-bottom: 0px;}
+    .sub-title { font-size: 20px; text-align: center; color: #64748b; margin-bottom: 30px; }
+    .hero-card { padding: 30px; border-radius: 15px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# Hero Section
-st.markdown('<div class="main-title">CrestCV</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Master Your Career with AI-Powered Precision</div>', unsafe_allow_html=True)
-
-st.image("https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=1000", use_container_width=True)
-
-st.divider()
-
-# Main Content - Two Column Articles
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown('<div class="article-box">', unsafe_allow_html=True)
-    st.subheader("🚀 The 6-Second Rule")
-    st.write("""
-    Did you know recruiters spend an average of **6 seconds** looking at a resume before deciding to keep it or toss it? 
-    In 2026, the competition is even higher. CrestCV helps you optimize your layout to ensure your most important skills 
-    hit the recruiter's eye instantly.
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="article-box">', unsafe_allow_html=True)
-    st.subheader("💡 Why ATS Matters")
-    st.write("""
-    75% of resumes are rejected by **Applicant Tracking Systems (ATS)** before a human even sees them. 
-    Our AI Resume Analyzer scans your document for the exact keywords top firms are looking for, 
-    giving you the "inside edge" on the algorithm.
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with col2:
-    st.subheader("Available Tools")
-    st.info("👈 Use the sidebar to navigate between our tools!")
+# --- 3. LOGIN LOGIC (Fixed for Android) ---
+def login_form():
+    st.markdown('<div class="main-title">CrestCV</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Sign in to unlock AI features</div>', unsafe_allow_html=True)
     
-    with st.expander("🔍 AI Resume Analyzer"):
-        st.write("Upload your PDF and get an instant score, keyword analysis, and improvement tips.")
-        
-    with st.expander("📝 Pro Resume Builder"):
-        st.write("Enter your details and generate a clean, modern, ATS-friendly PDF resume in seconds.")
+    with st.container():
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            with st.form("mobile_login"):
+                u = st.text_input("Username")
+                p = st.text_input("Password", type="password")
+                submitted = st.form_submit_button("Login to Dashboard", use_container_width=True)
+                if submitted:
+                    if u == "admin" and p == "123": # Simple auth for now
+                        st.session_state.logged_in = True
+                        st.session_state.username = u
+                        st.rerun()
+                    else:
+                        st.error("Invalid credentials")
+            st.info("Demo: admin / 123")
 
-st.divider()
+# --- 4. MAIN PAGE CONTENT ---
+if not st.session_state.logged_in:
+    login_form()
+else:
+    st.markdown('<div class="main-title">CrestCV Dashboard</div>', unsafe_allow_html=True)
+    st.write(f"Welcome back, **{st.session_state.username}**!")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""<div class="hero-card">
+            <h3>🚀 AI Neural Audit</h3>
+            <p>Upload your resume and get a deep analysis of missing keywords and ATS scores.</p>
+        </div>""", unsafe_allow_html=True)
+        if st.button("Open Analyzer", use_container_width=True):
+            st.switch_page("pages/1_🔍_AI_Analyzer.py")
 
-# Bottom Content for AdSense (SEO)
-st.header("Career Growth Tips for 2026")
-st.write("""
-Landing a dream job in the modern market requires more than just a list of past roles. It requires a 
-**Personal Brand**. At CrestCV, we believe that your resume should be a living document that evolves 
-with the industry. Whether you are a developer in Kerala or a designer in London, your story needs 
-to be told with clarity and data-driven results.
-""")
+    with col2:
+        st.markdown("""<div class="hero-card">
+            <h3>📝 Pro Builder</h3>
+            <p>Create an advanced, Canva-style resume optimized for 2026 hiring trends.</p>
+        </div>""", unsafe_allow_html=True)
+        if st.button("Open Builder", use_container_width=True):
+            st.switch_page("pages/2_📝_Resume_Builder.py")
 
-st.caption("© 2026 CrestCV - All Rights Reserved.")
+    st.divider()
+    st.subheader("Latest Career Insights")
+    st.write("Check out our **Career Guides** in the sidebar to master the 6-second recruiter rule.")
+    
+    if st.sidebar.button("Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
