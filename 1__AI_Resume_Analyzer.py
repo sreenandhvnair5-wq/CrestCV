@@ -126,7 +126,7 @@ st.markdown(f"""
     <div class="header-box">
         <img src="{logo_url}" width="60">
         <div>
-            <h1 style='margin:0; padding:0; color:#1e40af;'>NeuralCV</h1>
+            <h1 style='margin:0; padding:0; color:#1e40af;'>CrestCV</h1>
             <p style='margin:0; font-size:0.9rem; color:grey;'>Advanced AI Career Analytics</p>
         </div>
     </div>
