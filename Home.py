@@ -69,4 +69,4 @@ with col_a:
     st.subheader("Want to save your progress?")
     st.write("Create a free account to store your AI audits and generated resumes.")
 with col_b:
-    st.page_link("pages/0_🔐_Login.py", label="Login / Sign Up", icon="🔐", use_container_width=True)
+    st.page_link("pages/0__Login-Signup.py", label="Login / Sign Up", icon="🔐", use_container_width=True)
