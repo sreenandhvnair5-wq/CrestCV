@@ -104,7 +104,7 @@ else:
     with c1:
         st.info("💡 **Ready to audit?**")
         if st.button("Open AI Analyzer", use_container_width=True):
-            st.switch_page("pages/1_🔍_AI_Analyzer.py")
+            st.switch_page("pages/1__AI_Resume_Analyzer.py")
     
     with c2:
         st.info("🛑 **Session Management**")
