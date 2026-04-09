@@ -4,6 +4,19 @@ import json
 import os
 from groq import Groq
 
+
+# MUST BE THE FIRST THING AFTER IMPORTS
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+# Debugger (You can remove this later)
+# st.sidebar.write(f"Debug: Logged In = {st.session_state.logged_in}")
+
+if not st.session_state.logged_in:
+    st.warning("⚠️ Access Denied. Please log in first.")
+    st.page_link("pages/0_🔐_Login.py", label="Go to Login Page", icon="🔐")
+    st.stop() # Stops the rest of the code from running
+
 # --- 1. INITIALIZE AI ---
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
