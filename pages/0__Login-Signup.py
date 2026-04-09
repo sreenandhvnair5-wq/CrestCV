@@ -1,11 +1,7 @@
 import streamlit as st
 import json
 import os
-# Temporary Debugger - Put this at the top of 0_🔐_Login.py
-st.sidebar.write("### 📁 Files Found in Pages:")
-if os.path.exists("pages"):
-    for f in os.listdir("pages"):
-        st.sidebar.code(f"pages/{f}")
+
 # --- 1. ROBUST DATABASE LOGIC ---
 DB_FILE = "users.json"
 
