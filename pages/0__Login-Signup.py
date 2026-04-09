@@ -102,9 +102,20 @@ else:
         # Ensure this filename matches your GitHub exactly
         if st.button("Open AI Analyzer", use_container_width=True):
             try:
+                # 1. Try the exact path you provided
                 st.switch_page("pages/1__AI_Resume_Analyzer.py")
-            except:
-                st.error("Could not find Analyzer page. Check filename.")
+            except Exception as e:
+                # 2. If it fails, show the error AND list the actual files
+                st.error("❌ Could not find the Analyzer page.")
+                
+                # This part helps you debug by showing real filenames in your folder
+                import os
+                if os.path.exists("pages"):
+                    files = os.listdir("pages")
+                    st.info(f"Checking 'pages' folder... Found these files: {files}")
+                    st.write("Make sure the name in code matches one of these EXACTLY.")
+                else:
+                    st.error("The 'pages' folder itself was not found!")
     
     with c2:
         st.info("🛑 **Session Management**")
