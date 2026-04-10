@@ -11,7 +11,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.set_page_config(page_title="CrestCV | Professional AI Career Tools", page_icon="🏠", layout="wide")
+
 
 # Custom CSS for a clean look
 st.markdown("""
