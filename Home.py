@@ -1,4 +1,15 @@
 import streamlit as st
+from PIL import Image
+
+# Load your logo image
+img = Image.open("logo.png") 
+
+# This changes the browser tab icon and the title
+st.set_page_config(
+    page_title="CrestCV | AI Career Intelligence",
+    page_icon=img, # This replaces the streamlit logo
+    layout="wide"
+)
 
 st.set_page_config(page_title="CrestCV | Professional AI Career Tools", page_icon="🏠", layout="wide")
 
